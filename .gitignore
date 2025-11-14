@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Scraping output files
+output/
+*.jsonl
+
+# Checkpoint files
+checkpoints/
+*.checkpoint.json
+*_checkpoint.json
+
+# Log files
+logs/
+*.log
+
+# Metadata files
+*_metadata.json
+
+# System files
+.DS_Store
+.vscode/
+.idea/
+
+# Temporary files
+tmp_*
