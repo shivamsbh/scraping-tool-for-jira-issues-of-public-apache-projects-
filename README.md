@@ -123,24 +123,32 @@ flowchart TB
 ## Configuration
 
 Environment variables (read by `src/config/config.js`):
-- JIRA_BASE_URL: e.g., https://your-domain.atlassian.net
-- JIRA_EMAIL: account email for API auth
-- JIRA_API_TOKEN: API token
-- JQL: JQL query used for scraping (e.g., project = ABC AND created >= -30d)
-- PAGE_SIZE: page size for pagination (default 50/100 depending on implementation)
-- BACKOFF_STRATEGY: exponential | fixed
-- BACKOFF_BASE_DELAY_MS: base delay (ms)
-- BACKOFF_MAX_RETRIES: max retry attempts
-- OUTPUT_BASENAME: logical name used for outputs (e.g., KAFKA)
+- JIRA_BASE_URL: e.g., https://issues.apache.org/jira (public Apache JIRA)
+- JIRA_API_VERSION: default "2" for Apache JIRA
+- JIRA_PROJECTS: comma-separated list, e.g., KAFKA,SPARK,HADOOP
+- MAX_RESULTS_PER_PAGE: pagination page size (default 100)
+- MAX_ISSUES_PER_PROJECT: optional hard cap per project (null means no cap)
+- MAX_RETRIES: max retry attempts (default 3)
+- RETRY_DELAY_MS: base delay for backoff in ms (default 2000)
+- REQUEST_TIMEOUT_MS: HTTP request timeout in ms (default 30000)
+- RATE_LIMIT_DELAY_MS: delay between API calls in ms (default 1000)
+- OUTPUT_DIR: output directory for artifacts (default ./output)
+- CHECKPOINT_DIR: directory for checkpoints (default ./checkpoints)
+
+Notes:
+- No API key or authentication is required for the public Apache JIRA endpoints used here.
+- JQL is constructed internally per project (e.g., project = KAFKA order by created DESC). You can customize it in the scraper if needed.
 
 
 ## Sample Jira API Request and Response
 
-HTTP Request:
-- GET {JIRA_BASE_URL}/rest/api/3/search?jql={ENCODED_JQL}&startAt=0&maxResults=50
+HTTP Request (Apache public JIRA):
+- GET {JIRA_BASE_URL}/rest/api/2/search?jql={ENCODED_JQL}&startAt=0&maxResults=50
 - Headers:
-  - Authorization: Basic base64(JIRA_EMAIL:JIRA_API_TOKEN)
   - Accept: application/json
+
+Notes:
+- No authentication header is required for the public Apache JIRA used by this project.
 
 Truncated sample response (fields will vary by your Jira instance):
 
