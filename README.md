@@ -52,17 +52,17 @@ MIT License is retained for this repository.
 
 ```mermaid
 flowchart TD
-    A[Start] --> B[Load Config (env, config.js)]
+    A[Start] --> B[Load Config env and configjs]
     B --> C[Initialize Logger]
-    C --> D[Initialize JiraClient]
-    D --> E[Initialize FileHandler]
-    E --> F[Scrape: Fetch issues via JQL + Pagination]
-    F --> G[Transform Issue -> Training JSON]
+    C --> D[Initialize Jira Client]
+    D --> E[Initialize File Handler]
+    E --> F[Scrape fetch issues via JQL and pagination]
+    F --> G[Transform issue to training JSON]
     G --> H[Append to JSONL]
-    H --> I[Update Metadata + Checkpoints]
-    I --> J{More Pages?}
+    H --> I[Update metadata and checkpoints]
+    I --> J{More pages}
     J -- Yes --> F
-    J -- No --> K[Finalize + Close Streams]
+    J -- No --> K[Finalize and close streams]
     K --> L[Done]
 ```
 
@@ -73,18 +73,18 @@ flowchart TD
 
 ```mermaid
 sequenceDiagram
-    participant S as ScraperService
-    participant J as JiraClient
+    participant S as Scraper Service
+    participant J as Jira Client
     participant API as Jira REST API
 
-    S->>J: fetchIssues(jql, page, pageSize)
-    loop Until success or maxRetries
-        J->>API: GET /search?jql=...&startAt=...&maxResults=...
-        alt 2xx success
-            API-->>J: issues + pagination
+    S->>J: fetch issues with jql page page size
+    loop until success or max retries
+        J->>API: GET /search with jql startAt and maxResults
+        alt success 2xx
+            API-->>J: issues and pagination
             J-->>S: issues
-        else 429/5xx
-            J->>J: backoff (exponential or fixed)
+        else rate limit or 5xx
+            J->>J: backoff exponential or fixed
         end
     end
 ```
@@ -103,7 +103,7 @@ flowchart LR
     C --> D[Transform each issue]
     D --> E[Write to JSONL]
     E --> F[Update checkpoint]
-    F --> G{Next page?}
+    F --> G{Next page}
     G -- Yes --> C
     G -- No --> H[Finish]
 ```
